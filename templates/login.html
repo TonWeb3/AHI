@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — {{ bot_label }} Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-6 sm:p-8">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-white tracking-tight">{{ bot_label }} Dashboard</h1>
+            <p class="text-xs text-gray-400 mt-1">Sign in once every 24 hours to access the trading bot</p>
+        </div>
+
+        {% if not configured %}
+        <div class="mb-5 p-4 rounded-lg bg-amber-950/70 border border-amber-600/70 text-amber-200 text-xs leading-relaxed">
+            <p class="font-bold uppercase tracking-wider mb-1">Dashboard Locked — Credentials Not Set</p>
+            <p>Add your <code class="font-mono bg-gray-900 px-1 py-0.5 rounded">auth.username</code> and <code class="font-mono bg-gray-900 px-1 py-0.5 rounded">auth.password</code> in <code class="font-mono bg-gray-900 px-1 py-0.5 rounded">config.json</code> and restart the bot. They will be encrypted automatically on startup.</p>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="mb-5 p-3 rounded-lg bg-red-950/70 border border-red-600/70 text-red-200 text-xs font-medium">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="post" action="/login" class="space-y-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div>
+                <label for="username" class="block text-gray-400 text-xs uppercase font-bold tracking-wider mb-1.5">Username</label>
+                <input id="username" name="username" type="text" required autocomplete="username" autofocus
+                       class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label for="password" class="block text-gray-400 text-xs uppercase font-bold tracking-wider mb-1.5">Password</label>
+                <input id="password" name="password" type="password" required autocomplete="current-password"
+                       class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button type="submit" {% if not configured %}disabled{% endif %}
+                    class="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition text-sm">
+                Sign In (24h Session)
+            </button>
+        </form>
+    </div>
+</body>
+</html>
