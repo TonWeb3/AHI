@@ -71,17 +71,17 @@ def decide_ev(inputs: Dict[str, Any]) -> Dict[str, Any]:
     min_prob = inputs.get("minProb", 0.55)
     ev_threshold = inputs.get("evThreshold", 0.04)
 
-    # ── VETO filters — block ALL directions when market is over-extended or at RSI extremes ──
-    if inputs.get("haExhaustedGreen"):
+    # ── VETO filters — never chase a stretched move or trade into RSI extremes ──
+    if side == "UP" and inputs.get("haExhaustedGreen"):
         return _no_ev("ha_exhausted_up")
-    if inputs.get("haExhaustedRed"):
+    if side == "DOWN" and inputs.get("haExhaustedRed"):
         return _no_ev("ha_exhausted_down")
 
     rsi = inputs.get("rsi")
     if rsi is not None:
-        if rsi > 70:
+        if side == "UP" and rsi > 70:
             return _no_ev("rsi_overbought")
-        if rsi < 30:
+        if side == "DOWN" and rsi < 30:
             return _no_ev("rsi_oversold")
 
     # ── GATES ──
